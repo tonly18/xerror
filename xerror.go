@@ -5,22 +5,22 @@ import (
 )
 
 type NewError struct {
-	Err     error
-	Code    uint32
-	Message string
-	stack   []Error
+	RawError error
+	Code     uint32
+	Message  string
+	stack    []Error
 }
 
 func (e *NewError) Error() string {
 	return fmt.Sprintf(`code:%v, message:%v`, e.Code, e.Message)
 }
 
-func (e *NewError) GetErr() error {
-	return e.Err
+func (e *NewError) GetRawError() error {
+	return e.RawError
 }
 
-func (e *NewError) SetErr(err error) {
-	e.Err = err
+func (e *NewError) SetRawError(err error) {
+	e.RawError = err
 }
 
 func (e *NewError) GetCode() uint32 {
@@ -43,18 +43,18 @@ func (e *NewError) GetStack() []Error {
 	return e.stack
 }
 
-func (e *NewError) addStack(err Error) {
+func (e *NewError) pushStack(err Error) {
 	if len(e.stack) == 0 {
 		e.stack = make([]Error, 0, 10)
 	}
 	e.stack = append(e.stack, err)
-	e.SetErr(err.GetErr())
+	e.SetRawError(err.GetRawError())
 	e.SetCode(err.GetCode())
 	e.SetMsg(err.GetMsg())
 }
 
 func (e *NewError) Is(err error) bool {
-	return e.GetErr() == err
+	return e.GetRawError() == err
 }
 
 // Wrap 老的错误信息包裹新的错误信息
@@ -73,13 +73,13 @@ func Wrap(originalError, newError Error) Error {
 	}
 
 	if newError == nil {
-		originalError.addStack(&NewError{
-			Err:     originalError.GetErr(),
-			Code:    originalError.GetCode(),
-			Message: originalError.GetMsg(),
+		originalError.pushStack(&NewError{
+			RawError: originalError.GetRawError(),
+			Code:     originalError.GetCode(),
+			Message:  originalError.GetMsg(),
 		})
 	} else {
-		originalError.addStack(newError)
+		originalError.pushStack(newError)
 	}
 
 	//return

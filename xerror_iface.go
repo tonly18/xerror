@@ -3,15 +3,15 @@ package xerror
 type Error interface {
 	Error() string
 
-	GetErr() error
-	SetErr(error)
+	GetRawError() error
+	SetRawError(error)
 	GetCode() uint32
 	SetCode(uint32)
 	GetMsg() string
 	SetMsg(string)
 
 	GetStack() []Error
-	addStack(Error)
+	pushStack(Error)
 
 	Is(error) bool
 }
