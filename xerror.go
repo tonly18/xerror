@@ -57,6 +57,15 @@ func (e *NewError) Is(err error) bool {
 	return e.GetRawError() == err
 }
 
+func (e *NewError) Contain(err error) bool {
+	for _, e := range e.GetStack() {
+		if e.Is(err) {
+			return true
+		}
+	}
+	return false
+}
+
 // Wrap 老的错误信息包裹新的错误信息
 //
 // @params

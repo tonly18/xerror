@@ -14,4 +14,5 @@ type Error interface {
 	pushStack(Error)
 
 	Is(error) bool
+	Contain(error) bool
 }
