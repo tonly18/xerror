@@ -15,4 +15,5 @@ type Error interface {
 
 	Is(error) bool
 	Contain(error) bool
+	String() string
 }

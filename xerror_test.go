@@ -12,6 +12,9 @@ import (
 
 func TestTXError(t *testing.T) {
 	_, err := A(100)
+
+	fmt.Println("err::::::::::::", err.String())
+
 	if err != nil {
 		if err.Is(net.ErrClosed) {
 			errList := err.GetStack()

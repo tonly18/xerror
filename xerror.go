@@ -1,6 +1,7 @@
 package xerror
 
 import (
+	"bytes"
 	"fmt"
 )
 
@@ -12,7 +13,7 @@ type NewError struct {
 }
 
 func (e *NewError) Error() string {
-	return fmt.Sprintf(`code:%v, message:%v`, e.Code, e.Message)
+	return e.String()
 }
 
 func (e *NewError) GetRawError() error {
@@ -64,6 +65,14 @@ func (e *NewError) Contain(err error) bool {
 		}
 	}
 	return false
+}
+
+func (e *NewError) String() string {
+	var errMessage bytes.Buffer
+	for _, err := range e.GetStack() {
+		errMessage.WriteString(fmt.Sprintf(`{xcode:%v, xmessage:%v, xerror:%v}`, err.GetCode(), err.GetMsg(), err.GetRawError().Error()))
+	}
+	return errMessage.String()
 }
 
 // Wrap 老的错误信息包裹新的错误信息
