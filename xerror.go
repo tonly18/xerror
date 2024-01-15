@@ -70,7 +70,11 @@ func (e *NewError) Contain(err error) bool {
 func (e *NewError) String() string {
 	var errMessage bytes.Buffer
 	for _, err := range e.GetStack() {
-		errMessage.WriteString(fmt.Sprintf(`{xcode:%v, xmessage:%v, xerror:%v}`, err.GetCode(), err.GetMsg(), err.GetRawError().Error()))
+		if err.GetRawError() == nil {
+			errMessage.WriteString(fmt.Sprintf(`{xcode:%v, xmessage:%v, xerror:nil}`, err.GetCode(), err.GetMsg()))
+		} else {
+			errMessage.WriteString(fmt.Sprintf(`{xcode:%v, xmessage:%v, xerror:%v}`, err.GetCode(), err.GetMsg(), err.GetRawError().Error()))
+		}
 	}
 	return errMessage.String()
 }
