@@ -13,7 +13,7 @@ import (
 func TestTXError(t *testing.T) {
 	_, err := A(100)
 
-	fmt.Println("err::::::::::::", err.String())
+	fmt.Println("err::::::::::::", err)
 
 	if err != nil {
 		if err.Is(net.ErrClosed) {
@@ -30,13 +30,24 @@ func A(uid int) (int, xerror.Error) {
 	data, err := B(uid)
 	if err != nil {
 		if err.Is(os.ErrClosed) {
-			xerr := xerror.Wrap(err, &xerror.NewError{
+			//xerr := xerror.Wrap(err, &xerror.NewError{
+			//	Code:     20005000,
+			//	RawError: net.ErrClosed,
+			//	Message:  "a-message",
+			//})
+			//return 0, xerr
+			//fmt.Println("a-err:::::::", xerr.GetCode(), xerr.GetRawError(), xerr.GetMsg(), len(xerr.GetStack()))
+
+			xerr := xerror.Wrap(&xerror.NewError{
 				Code:     20005000,
 				RawError: net.ErrClosed,
-				Message:  "a-message",
+				Message:  "0-message",
+			}, nil)
+			return 0, xerror.Wrap(xerr, &xerror.NewError{
+				Code:     20005001,
+				RawError: xerr,
+				Message:  "1-message",
 			})
-			//fmt.Println("a-err:::::::", xerr.GetCode(), xerr.GetRawError(), xerr.GetMsg(), len(xerr.GetStack()))
-			return 0, xerr
 		}
 	}
 

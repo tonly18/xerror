@@ -93,6 +93,16 @@ func Wrap(originalError, newError Error) Error {
 	if originalError == nil {
 		panic("the parameter originalError is nil")
 	}
+	if originalError != nil {
+		if _, ok := originalError.GetRawError().(Error); ok {
+			panic("xerror not wrap self")
+		}
+	}
+	if newError != nil {
+		if _, ok := newError.GetRawError().(Error); ok {
+			panic("xerror not wrap self")
+		}
+	}
 
 	if newError == nil {
 		originalError.pushStack(&NewError{
